@@ -89,28 +89,28 @@ class DBStorage(unittest.TestCase):
 
         session = models.storage._DBStorage__session
 
-        retrieved_state = session.query(State).filter_by(id=new_state).first()
+        retrieved_state = session.query(State).filter_by(id=new_state.id).first()
 
         self.assertEqual(retrieved_state.id, new_state.id)
         self.assertEqual(retrieved_state.name, new_state.name)
-        self.assertIsNone(retrieved_state)
+        self.assertIsNotNone(retrieved_state)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to database"""
         state_data = {"name": "Casablanca"}
-        new_state =State(**state_data)
+        new_state = State(**state_data)
 
         models.storage.new(new_state)
         models.storage.save()
 
         session = models.storage._DBStorage__session
 
-        retrieved_state = session.query(State).filter_by(id=new_state).first()
+        retrieved_state = session.query(State).filter_by(id=new_state.id).first()
 
         self.assertEqual(retrieved_state.id, new_state.id)
         self.assertEqual(retrieved_state.name, new_state.name)
-        self.assertIsNone(retrieved_state)
+        self.assertIsNotNone(retrieved_state)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_get(self):
@@ -128,8 +128,7 @@ class DBStorage(unittest.TestCase):
         retrieved_state = storage.get(State, state_instance.id)
 
         self.assertEqual(state_instance, retrieved_state)
-
-        fake_state_id = storage.get(State,- 'fake_id')
+        fake_state_id = storage.get(State, 'fake_id')
 
         self.assertEqual(fake_state_id, None)
 
