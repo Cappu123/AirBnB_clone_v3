@@ -98,17 +98,43 @@ def update_place(place_id):
         return abort(404)
 
 
+@app_views.route('/places_search', methods=['POST'])
+def places_search():
+    """
+    Retrieves place objects based on the provided JSON 
+    search criteria
+    """
+
+    if request.content_type != 'application/json':
+        return abort(400, "Not a JSON")
+    if not request.get_json():
+        return abort(400, "Not a Json")
+    data = request.get_json()
+
+    if data:
+        states = data.get('states')
+        cities = data.get('cities')
+        amenities = data.get('amenities')
+    if not (states or cities or amenities):
+        places = storage.all(Place).values()
+        list_places = [place.to_dict() tor place in places]
+        return jsonify(list_places)
+
+    list_places = []
+
+    if states:
+        states_obj = [storage.get(State, state_id) for state_id in states]
+        for state in states_obj:
+            if state:
+                for city in state.cities:
+                    if city:
+                        for place in city.places:
+                            list_places.append(place)
 
 
-
-
-
-
-
-
-
-
-
-
-
+    if citiess:
+        city_obj = [storage.get(City, city_id) for city_id in cities]
+        for city in city_obj:
+            if city:
+                for place in city.places:
 
