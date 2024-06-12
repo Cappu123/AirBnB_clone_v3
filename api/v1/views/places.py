@@ -137,4 +137,13 @@ def places_search():
         for city in city_obj:
             if city:
                 for place in city.places:
+                    if place not in list_places:
+                        list_places.append(place)
+
+    if amenities:
+        if not list_places:
+            all_places = storage.all(Place).values()
+            amenities_obj = [storage.get(Amenity, a_id) for a_id in amenities]
+            for place in all_places:
+                if all([am in place.amenities for am in amenities_obj]):
 
