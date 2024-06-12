@@ -8,6 +8,8 @@ from flask import abort, jsonify, request
 from models.city import City
 from models.place import Place
 from models.user import User
+from models.state import State
+from models.amenity import Amenity
 from api.v1.views import app_views
 from models import storage
 
@@ -146,4 +148,12 @@ def places_search():
             amenities_obj = [storage.get(Amenity, a_id) for a_id in amenities]
             for place in all_places:
                 if all([am in place.amenities for am in amenities_obj]):
+                    list_places.append(place)
 
+    places = []
+    for plc_obj in list_places:
+        plc_dict = plc_obj.to_dict()
+        plc_dict.pop('amenities', None)
+        places.append(plc_dict)
+
+    return jsonify(Places)
